@@ -15,7 +15,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
+  "iteration": 1556960918232,
   "links": [],
   "panels": [
     {
@@ -40,7 +41,7 @@
         "min": false,
         "rightSide": true,
         "show": true,
-        "sideWidth": 300,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
@@ -58,7 +59,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_load1",
+          "expr": "node_load1{instance=~\"$node\"}",
           "format": "time_series",
           "interval": "10s",
           "intervalFactor": 2,
@@ -66,7 +67,7 @@
           "refId": "A"
         },
         {
-          "expr": "node_load5",
+          "expr": "node_load5{instance=~\"$node\"}",
           "format": "time_series",
           "interval": "10s",
           "intervalFactor": 2,
@@ -74,7 +75,7 @@
           "refId": "B"
         },
         {
-          "expr": "node_load15",
+          "expr": "node_load15{instance=~\"$node\"}",
           "format": "time_series",
           "interval": "10s",
           "intervalFactor": 2,
@@ -125,6 +126,7 @@
     },
     {
       "aliasColors": {
+        "Free": "semi-dark-green",
         "Total": "red"
       },
       "bars": false,
@@ -149,7 +151,7 @@
         "min": true,
         "rightSide": true,
         "show": true,
-        "sideWidth": 300,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
@@ -172,22 +174,29 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
-          "format": "time_series",
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "Used",
-          "refId": "A"
-        },
-        {
-          "expr": "node_memory_MemTotal_bytes",
+          "expr": "node_memory_MemTotal_bytes{instance=~\"$node\"}",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "intervalFactor": 1,
           "legendFormat": "Total",
           "refId": "B"
+        },
+        {
+          "expr": "node_memory_MemFree_bytes{instance=~\"$node\"}",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Free",
+          "refId": "A"
+        },
+        {
+          "expr": "node_memory_MemAvailable_bytes{instance=~\"$node\"}",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "Avail",
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -233,6 +242,7 @@
     },
     {
       "aliasColors": {
+        "Free": "semi-dark-green",
         "Total": "red",
         "Used": "green"
       },
@@ -256,7 +266,7 @@
         "min": false,
         "rightSide": true,
         "show": true,
-        "sideWidth": 300,
+        "sideWidth": null,
         "total": false,
         "values": true
       },
@@ -279,7 +289,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "node_filesystem_size_bytes{mountpoint='/'}",
+          "expr": "node_filesystem_size_bytes{mountpoint='/', instance=~\"$node\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -288,12 +298,12 @@
           "refId": "A"
         },
         {
-          "expr": "node_filesystem_size_bytes{mountpoint='/'} - node_filesystem_avail_bytes{mountpoint='/'}",
+          "expr": "node_filesystem_free_bytes{mountpoint='/', instance=~\"$node\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Used",
+          "legendFormat": "Free",
           "refId": "B"
         }
       ],
@@ -339,15 +349,67 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "10s",
   "schemaVersion": 18,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "text": "nodeexporter:9100",
+          "value": "nodeexporter:9100"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(node_exporter_build_info{name='$name'},instance)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "node",
+        "multi": false,
+        "name": "node",
+        "options": [],
+        "query": "label_values(node_exporter_build_info{name='$name'},instance)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "isNone": true,
+          "text": "None",
+          "value": ""
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(node_exporter_build_info{env='$env'},name)",
+        "hide": 2,
+        "includeAll": false,
+        "label": "name",
+        "multi": false,
+        "name": "name",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
-    "from": "now/d",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -375,8 +437,8 @@
       "30d"
     ]
   },
-  "timezone": "",
-  "title": "Host metrics",
-  "uid": "ZvwkrfkWz",
-  "version": 9
+  "timezone": "browser",
+  "title": "Nodes metrics",
+  "uid": "ZvwkrfkWt",
+  "version": 1
 }
