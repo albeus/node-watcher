@@ -27,10 +27,10 @@ The system is based on Docker containers managed by docker-composer.
 
 * Prometheus:
   * it will store the metrics in its local time-series database;
-  * the web gui will be accessible on localhost at address http://localhost:9090.
+  * the web GUI will be accessible on localhost at address http://localhost:9090.
 
 * Nodeexporter:
-  * it is configured to access to host for collecting system informations
+  * it is configured to access to the host for collecting system information
     (rootfs, proc, sys);
   * it is accessible on localhost at the address http://localhost:9100/metrics.
 
